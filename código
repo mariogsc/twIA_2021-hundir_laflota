@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TAM 9   
+#define NBARCOS 5
+#define LTEXTOS 30
+
+typedef struct
+{
+	int fila, columna;  // estructura con la posicion
+}VECTOR;
+
+typedef struct
+{
+  VECTOR posicion;
+  char orientacion;
+  char simbolo;              // estructura con los datos de cada barco
+  int longitud;
+  char nombre[LTEXTOS];
+}BARCO;
+
+int main(void)
+{
+	const char* nombres[] = {"Portaaviones","Crucero","Buque","Submarino","Lancha" };
+	int longitudes[] = {5,4,3,2,1};
+	char simbolos[] = {'P','C','B','S','L'};
+
+	char tablero[TAM][TAM]; // El tablero comienza en (0,0) y se extiende hasta (TAM,TAM)
+	BARCO barcos[NBARCOS]; // Espacio para almacenar los datos de cada barco
+	int i,j,fila,columna,longitud,correcto;    // Variables auxiliares
+	char orientacion,usuario[LTEXTOS];
+
+	// El usuario introduce su nombre
+	printf("Introduce el nombre de usuario: ");
+	gets_s(usuario);
+
+	// Vaciamos el tablero
+	for (fila = 0;fila < TAM;fila++)
+		for (columna = 0;columna < TAM;columna++)
+			tablero[fila][columna]=' ';
+
+	// Recorremos el bucle para crear cada barco
+	for (i = 0;i < NBARCOS;i++)  
+	{
+		strcpy_s(barcos[i].nombre, nombres[i]);   // Copiamos el nombre de cada barco dentro de la variable nombre de la estructuctura con los datos de los barcos
+		barcos[i].longitud = longitudes[i];      // Guardamos la longitud de cada barco dentro de la variable longitud de la estructuctura con los datos de los barcos
+		barcos[i].simbolo = simbolos[i];        // Guardamos el simbolo de cada barco dentro de la variable simbolo de la estructuctura con los datos de los barcos
+
+		// bucle para guardar la orientacion de cada barco
+		do
+		{
+			printf("Introduzca orientacion del %s (H=Horizontal, V=Vertical):", barcos[i].nombre);   // Pedimos y guardamos la orientacion de cada barco
+			scanf_s("%c", &orientacion); 
+
+			getchar();    // Añadimos un getchar para evitar que guarde valores libres y se superpongan los printf
+			
+			if (orientacion == 'h')    // Transformación a mayúsculas si son h o v (minúsculas)
+				orientacion = 'H';
+			else
+				if (orientacion == 'v')
+					orientacion = 'V';
+			
+			if (orientacion != 'H' && orientacion != 'V')
+				printf("La orientacion debe ser H ó V\n");
+		} while (orientacion != 'H' && orientacion != 'V');  // Repetimos el bucle hasta que el caracter introducido sea igual a h, H, v ó V
+
+		barcos[i].orientacion = orientacion;    // Guardamos la orientacion  de cada barco dentro de la variable orientacion de la estructuctura con los datos de los barcos
+
+		// bucle para guardar la posición de cada barco
+		do
+		{
+			printf("Introduzca posicion del %s (fila columna):", barcos[i].nombre);     // Pedimos y guardamos la posición de cada barco
+			scanf_s("%d %d", &fila, &columna);                      // IMPORTANTE QUE SE PONGA UN ESPACION ENTRE AMBOS SI NO EL BUCLE NO AVANZA
+
+			getchar();        // Añadimos un getchar para evitar que guarde valores libres y se superpongan los printf
+
+			correcto = 1; 
+
+			if (barcos[i].orientacion == 'H' && columna + barcos[i].longitud > TAM)     // Verificamos que las posiciones introducidas son correctas y el barco no se sale del tablero
+			{
+				correcto = 0;
+				printf("En esa posicion el %s no cabe en el tablero\n",barcos[i].nombre);
+			}
+			else
+				if (barcos[i].orientacion == 'V' && fila + barcos[i].longitud > TAM)
+				{
+					printf("En esa posicion el %s no cabe en el tablero\n",barcos[i].nombre);
+					correcto = 0;
+				}
+
+			// Aquí se  tendrá que comprobar que el barco no se superpone con otro (se hace con funciones)
+
+		} while (correcto == 0);  // Repetimos el bucle hasta que se introduzcan posiciones validas
+		
+		barcos[i].posicion.fila = fila;             // Guardamos la posicion de cada barco dentro de las variables fila y columna de la estructuctura con los datos de los barcos
+		barcos[i].posicion.columna = columna;
+
+		//Guardamos el barco en el tablero
+		for (j = 0;j < barcos[i].longitud;j++)
+		{
+			if (barcos[i].orientacion=='H')         // Diferenciamos si la orientación elegida fue Horizontal o Vertical para introducir un vector fila o un vector columna
+				tablero[fila][columna+j] = barcos[i].simbolo;
+			else
+				tablero[fila+j][columna] = barcos[i].simbolo;
+		}
+	}
+
+
+	//Dibujamos tablero
+	for (fila = 0;fila < TAM;fila++)
+	{
+		for (columna = 0;columna < TAM;columna++)
+			printf("[%c] ", tablero[fila][columna]);
+		printf("\n");
+	}
+}
