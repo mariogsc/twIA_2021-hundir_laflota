@@ -5,10 +5,8 @@ A través de elementos de hardware, principalmente una panatlla led y un program
 ## Integrantes del equipo
 
 -Raúl Granadero Uceda @Raul-Granadero
--Iker Giraldez Fernández 
 -Mario Gómez-Sánchez Celemín
--Manuel Gutiérrez Huerta
--Diego González Zabalza
+
 
 ## Objetivos del trabajo
 
